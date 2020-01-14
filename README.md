@@ -10,3 +10,5 @@ cargo run --release
 wget https://github.com/Mendess2526/snek/releases/download/v1.0/snek_x86_64 -O snek
 ./snek
 ```
+
+_hora e meia bem passada no burger king :tm:_
