@@ -15,7 +15,6 @@ const UPDATE_RATE: u64 = 100;
 const CELL_SIZE: f32 = 10.0;
 
 fn main() {
-    // Make a Context.
     let (mut ctx, mut event_loop) = ContextBuilder::new("snek", "Mendess")
         .window_mode(conf::WindowMode::default().dimensions(
             MAP_SIZE as f32 * CELL_SIZE + 80.0,
@@ -24,12 +23,8 @@ fn main() {
         .build()
         .expect("could not create ggez context!");
 
-    // Create an instance of your event handler.
-    // Usually, you should provide it with the Context object to
-    // use when setting your game up.
     let mut my_game = MyGame::new(&mut ctx);
 
-    // Run!
     match event::run(&mut ctx, &mut event_loop, &mut my_game) {
         Ok(_) => println!("Exited cleanly."),
         Err(e) => println!("Error occured: {}", e),
