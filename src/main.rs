@@ -15,7 +15,7 @@ const UPDATE_RATE: u64 = 100;
 const CELL_SIZE: f32 = 10.0;
 
 fn main() {
-    let (mut ctx, mut event_loop) = ContextBuilder::new("snek", "Mendess")
+    let (mut ctx, event_loop) = ContextBuilder::new("snek", "Mendess")
         .window_mode(conf::WindowMode::default().dimensions(
             MAP_SIZE as f32 * CELL_SIZE + 80.0,
             MAP_SIZE as f32 * CELL_SIZE + 30.0,
@@ -23,12 +23,9 @@ fn main() {
         .build()
         .expect("could not create ggez context!");
 
-    let mut my_game = MyGame::new(&mut ctx);
+    let my_game = MyGame::new(&mut ctx);
 
-    match event::run(&mut ctx, &mut event_loop, &mut my_game) {
-        Ok(_) => println!("Exited cleanly."),
-        Err(e) => println!("Error occured: {}", e),
-    }
+    event::run(ctx, event_loop, my_game)
 }
 
 struct MyGame {
@@ -111,7 +108,7 @@ impl EventHandler for MyGame {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        graphics::clear(ctx, graphics::BLACK);
+        graphics::clear(ctx, graphics::Color::BLACK);
         for (x, y, t) in self
             .map
             .iter()
@@ -130,7 +127,7 @@ impl EventHandler for MyGame {
                 graphics::DrawMode::fill(),
                 rect,
                 if *t == Tile::Wall {
-                    graphics::WHITE
+                    graphics::Color::WHITE
                 } else {
                     graphics::Color::new(0.0, 1.0, 0.0, 1.0)
                 },
@@ -173,8 +170,8 @@ impl EventHandler for MyGame {
         } {
             let text = graphics::Text::new(
                 graphics::TextFragment::new(text)
-                    .scale(graphics::Scale::uniform(20.0))
-                    .color(graphics::WHITE),
+                    .scale(20.0)
+                    .color(graphics::Color::WHITE),
             );
             graphics::draw(
                 ctx,
@@ -184,8 +181,8 @@ impl EventHandler for MyGame {
         }
         let text = graphics::Text::new(
             graphics::TextFragment::new("SCORE:")
-                .scale(graphics::Scale::uniform(20.0))
-                .color(graphics::WHITE),
+                .scale(20.0)
+                .color(graphics::Color::WHITE),
         );
         graphics::draw(
             ctx,
@@ -194,8 +191,8 @@ impl EventHandler for MyGame {
         )?;
         let text = graphics::Text::new(
             graphics::TextFragment::new(self.score.to_string())
-                .scale(graphics::Scale::uniform(20.0))
-                .color(graphics::WHITE),
+                .scale(20.0)
+                .color(graphics::Color::WHITE),
         );
         graphics::draw(
             ctx,
@@ -281,12 +278,9 @@ fn new_coord(dir: Direction, (x, y): Coord) -> Coord {
 impl Direction {
     fn is_inverse(self, d: Direction) -> bool {
         use Direction::*;
-        match (self, d) {
-            (Up, Down) => true,
-            (Down, Up) => true,
-            (Left, Right) => true,
-            (Right, Left) => true,
-            _ => false,
-        }
+        matches!(
+            (self, d),
+            (Up, Down) | (Down, Up) | (Left, Right) | (Right, Left)
+        )
     }
 }
